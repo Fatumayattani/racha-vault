@@ -2,16 +2,18 @@
 
 ## 1. System Overview
 
-Racha Vault is a verifiable, encrypted research and evidence vault built on Storacha Spaces. The system is designed to securely ingest artifacts (local files or GitHub release assets), encrypt them client-side, store them on decentralized storage, and maintain a CID-based audit trail for integrity and provenance.
+Racha Vault is a verifiable, encrypted research and evidence vault built on Storacha, designed around a vault-as-entity architecture. Each vault is treated as a first class identity (Vault DID) with capability scoped access using UCAN delegations.
 
-The architecture follows a storage-first model where:
+The system enables secure ingestion of research artifacts (local files or GitHub release assets), client-side encryption, decentralized storage on Storacha Spaces, and CID-based provenance tracking through an auditable metadata layer.
 
-* Files are encrypted before upload
-* Encrypted artifacts are stored on Storacha
-* CIDs act as immutable references
-* Metadata and audit logs are indexed separately
+Core architectural principles:
 
-This ensures zero-knowledge storage with verifiable data integrity.
+* Vault-centric identity model (Vault DID)
+* Capability-based authorization (UCAN)
+* Client-side encryption (zero-knowledge)
+* CID-based immutable versioning
+* Verifiable audit trails
+* Real-world artifact ingestion (GitHub Releases)
 
 ---
 
@@ -19,88 +21,132 @@ This ensures zero-knowledge storage with verifiable data integrity.
 
 ### 2.1 Frontend (Vault Application)
 
-Responsible for:
-
-* Vault creation and management
-* Artifact uploads and imports
-* Encryption handling (client-side)
-* Audit trail visualization
-* CID version history display
-
-Tech: React, TypeScript, Tailwind
-
----
-
-### 2.2 Encryption Layer (Client-Side)
-
-All artifacts are encrypted in the browser before being uploaded to Storacha.
-
-Key characteristics:
-
-* AES-GCM encryption via Web Crypto API
-* Zero plaintext exposure to backend or storage layer
-* Local key handling for MVP (no external key custody)
-
-This aligns with a zero-knowledge storage model.
-
----
-
-### 2.3 Storage Layer (Storacha)
-
-Storacha acts as the primary decentralized storage infrastructure.
+The frontend acts as the primary orchestration layer for vault operations and user interactions.
 
 Responsibilities:
 
-* Store encrypted artifacts in Spaces
-* Generate immutable CIDs for each upload
-* Provide durable and verifiable persistence (IPFS + Filecoin pipeline)
+* Vault creation and management
+* Artifact upload and GitHub import
+* Client-side encryption handling
+* UCAN delegation handling and proof usage
+* Audit trail and version history visualization
 
-Each vault maps logically to a Storacha Space.
+Tech Stack: React, TypeScript, Tailwind
 
 ---
 
-### 2.4 Metadata & Audit Service (Light Backend)
+### 2.2 Vault Identity Layer (Vault DID Model)
 
-A lightweight backend indexes non-sensitive metadata only.
+Racha Vault implements a vault-as-entity architecture where each vault is assigned a unique decentralized identifier (Vault DID).
 
-Stored data includes:
+Key properties:
+
+* Vault has its own DID independent of the user
+* Vault acts as the capability scope boundary
+* Users interact with vaults via UCAN delegations
+* Audit logs reference both Vault DID and Actor DID
+
+This enables cryptographically verifiable ownership and clean collaboration without relying on traditional role-based access systems.
+
+---
+
+### 2.3 Authorization Layer (UCAN Capability Model)
+
+Authorization is handled through UCAN (User Controlled Authorization Network) delegations rather than centralized role-based access control.
+
+Capability examples:
+
+* vault/read
+* vault/upload
+* vault/manage
+* vault/audit/write
+
+Flow:
+
+* Vault issues delegations to user DIDs
+* Users present UCAN proofs when performing operations
+* Operations are validated against scoped capabilities
+
+This aligns natively with Storacha’s capability-driven ecosystem design.
+
+---
+
+### 2.4 Encryption Layer (Client-Side)
+
+All artifacts are encrypted in the client before being uploaded to decentralized storage.
+
+Security characteristics:
+
+* AES-GCM encryption via Web Crypto API
+* No plaintext exposure to backend or storage layers
+* Zero-knowledge storage model
+* Local key generation per vault (MVP)
+
+This ensures sensitive research artifacts and evidence files remain private even when stored on decentralized infrastructure.
+
+---
+
+### 2.5 Storage Layer (Storacha Spaces)
+
+Storacha serves as the primary decentralized storage backend for encrypted artifacts.
+
+Responsibilities:
+
+* Store encrypted blobs in Spaces
+* Generate content identifiers (CIDs)
+* Provide durable persistence via IPFS + Filecoin pipeline
+* Support capability-aligned storage workflows
+
+Each vault is logically mapped to a Storacha Space, reinforcing isolation and provenance tracking.
+
+---
+
+### 2.6 Metadata & Audit Service (Light Backend)
+
+A lightweight backend indexes non-sensitive metadata and maintains audit logs.
+
+Stored metadata includes:
 
 * Artifact name
 * CID hash
-* Vault ID
+* Vault DID
+* Actor DID
 * Source (Local or GitHub)
 * Timestamps
 * Version lineage
 
-Important:
-No raw files or encryption keys are stored on the backend.
+Important constraint:
+No raw files, encryption keys, or sensitive payloads are stored on the backend.
 
 ---
 
-### 2.5 GitHub Integration Layer
+### 2.7 GitHub Integration Layer
 
-Racha Vault integrates with the GitHub Releases API to import research artifacts and datasets directly from public repositories.
+Racha Vault integrates with the GitHub Releases API to support provenance-aware artifact ingestion.
 
-Scope:
+Scope of integration:
 
-* Fetch release assets
-* Select dataset or artifact files
-* Import and encrypt before storage
+* Fetch public release assets
+* Import datasets, archives, and research artifacts
+* Tag artifacts with source metadata
+* Encrypt before decentralized storage
 
-This enables real-world research provenance workflows.
+This avoids heavy repository cloning while supporting real research workflows.
 
 ---
 
-## 3. Data Flow Pipeline
+## 3. End-to-End Data Flow
 
-Primary artifact ingestion flow:
+Primary artifact ingestion pipeline:
 
-1. User selects local file or GitHub release asset
-2. File is encrypted client-side
-3. Encrypted artifact is uploaded to Storacha Space
-4. Storacha returns a CID
-5. Metadata and audit entry are recorded
-6. Vault dashboard displays CID, version history, and integrity status
+1. User creates a vault (Vault DID generated)
+2. UCAN delegation issued to user DID with scoped capabilities
+3. User uploads local artifact or imports GitHub release asset
+4. Artifact encrypted client-side
+5. Encrypted artifact uploaded to Storacha Space with UCAN proof
+6. Storacha returns CID
+7. Metadata and audit entry recorded (Vault DID + Actor DID)
+8. Vault dashboard displays CID, version history, and audit trail
 
 ---
 
@@ -110,17 +156,21 @@ Primary artifact ingestion flow:
 sequenceDiagram
     participant User
     participant VaultApp as Racha Vault
-    participant Crypto as Client Encryption
+    participant UCAN as UCAN Delegation
     participant GitHub
+    participant Crypto as Client Encryption
     participant Storacha
     participant Backend as Metadata Service
 
-    User->>VaultApp: Create Vault / Import Artifact
+    User->>VaultApp: Create Vault
+    VaultApp->>VaultApp: Generate Vault DID
+    VaultApp->>UCAN: Issue Delegation (vault/manage, vault/upload)
+    User->>VaultApp: Import Artifact (Local or GitHub)
     VaultApp->>GitHub: Fetch Release Asset (optional)
     GitHub-->>VaultApp: Return File
     VaultApp->>Crypto: Encrypt Artifact
     Crypto-->>VaultApp: Encrypted File
-    VaultApp->>Storacha: Upload to Space
+    VaultApp->>Storacha: Upload to Space (with UCAN proof)
     Storacha-->>VaultApp: Return CID
     VaultApp->>Backend: Store Metadata + Audit Log
     VaultApp-->>User: Display CID, Audit Trail, Version History
@@ -128,94 +178,118 @@ sequenceDiagram
 
 ---
 
-## 5. Vault & Artifact Model
+## 5. Vault & Artifact Data Model
 
 ### Vault
 
-A logical container representing:
+A vault is a first-class entity representing:
 
 * Research project
 * Evidence archive
 * Dataset repository
 
-Each vault:
+Attributes:
 
-* Maps to a Storacha Space (logical association)
-* Maintains its own artifact history and audit logs
+* Vault DID
+* Associated Storacha Space
+* Delegation records
+* Artifact index
+
+---
 
 ### Artifact
 
-An artifact represents:
+Artifacts represent domain-specific research and evidence files such as:
 
-* Dataset
-* Paper
-* Evidence file
-* Experiment log
-* Document
+* Datasets
+* Papers
+* Evidence files
+* Experiment logs
+* Documents
 
 Each artifact:
 
 * Is encrypted before storage
-* Has a unique CID per version
+* Generates a unique CID per version
 * Maintains immutable version lineage
+* Is linked to both Vault DID and Actor DID
 
 ---
 
 ## 6. CID Versioning Strategy
 
-Racha Vault uses content addressing for version control.
+Racha Vault uses content addressing as the core version control mechanism.
 
 Characteristics:
 
-* Every upload generates a new CID
-* Previous versions remain immutable
-* Version history is traceable through audit logs
-* Integrity can be verified via CID comparison
+* Each upload produces a new CID
+* Historical versions remain immutable
+* Version lineage tracked via metadata and audit logs
+* Integrity verifiable through CID comparison
 
-This provides tamper-evident research provenance.
+This creates a tamper-evident provenance layer for research artifacts.
 
 ---
 
 ## 7. Security Model
 
-### 7.1 Encryption
+### 7.1 Zero-Knowledge Storage
 
-* Client-side encryption (AES-GCM)
-* No plaintext stored on server or storage layer
-
-### 7.2 Key Handling (MVP)
-
-* Keys generated locally per session or vault
-* Stored client-side for initial version
-* Export/import key support planned for multi-device use
-
-### 7.3 Zero-Knowledge Storage
-
-Storacha stores only encrypted blobs.
-The system never exposes raw research artifacts to backend services.
+* All files encrypted before upload
+* Storacha stores only encrypted blobs
+* Backend never accesses plaintext artifacts
 
 ---
 
-## 8. Integration Design Rationale
+### 7.2 Key Handling (MVP)
+
+* Keys generated client-side per vault
+* Stored locally (export/import planned)
+* No centralized key custody
+
+---
+
+### 7.3 Capability Security
+
+* UCAN scoped delegations per vault
+* Cryptographic proof of permissions
+* No reliance on traditional RBAC systems
+
+---
+
+## 8. Design Rationale
+
+### Why Vault-as-Entity (Vault DID)
+
+* Enables clean collaboration model
+* Supports delegation without redesign
+* Improves audit traceability
+* Aligns with decentralized identity principles
+
+---
+
+### Why UCAN Instead of Role-Based Auth
+
+* Fine-grained capability control
+* Delegation chains for collaboration
+* Native alignment with Storacha ecosystem
+* Cryptographically verifiable permissions
+
+---
 
 ### Why Storacha
 
 * Content addressed storage (CID integrity)
 * Decentralized persistence
-* Space-based logical organization
-* Alignment with verifiable data workflows
-
-### Why GitHub Releases Integration
-
-* Real research datasets are often distributed via releases
-* Enables provenance-aware artifact ingestion
-* Avoids heavy repository cloning complexity
-* Keeps focus on research artifacts, not source control
+* Space-based logical isolation
+* Capability-aligned architecture
 
 ---
 
-## 9. Future Extensibility (Post-MVP)
-* Lit Protocol for encrypted shared vaults
+## 9. Future Architectural Extensions
+
+* Multi-collaborator vaults with revocable delegations
+* Lit Protocol for encrypted shared access
 * Private repository import via OAuth
-* CLI uploader for research pipelines
-* Advanced audit analytics and provenance graphs
+* CLI ingestion pipelines for research datasets
+* Advanced provenance graph visualization
