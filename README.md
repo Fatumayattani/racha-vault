@@ -112,10 +112,10 @@ sequenceDiagram
 
 | Document | Path | Description |
 |----------|------|-------------|
-| Architecture | `docs/architecture.md` | System design covering Vault DID model, UCAN capability flow, encryption pipeline, and Storacha integration |
-| Product Overview | `docs/product.md` | Product vision, use cases, differentiation, and positioning as a verifiable research and evidence vault |
-| Roadmap | `docs/roadmap.md` | Phased development plan aligned with Vault-as-entity architecture and Storacha-native milestones |
-| Extras (Demo & Submission) | `docs/extras.md` | Demo flow, pitch summary, submission context, and reviewer-oriented project highlights |
+| Architecture | [docs/architecture.md](docs/architecture.md) | System design covering Vault DID model, UCAN capability flow, encryption pipeline, and Storacha integration |
+| Product Overview | [docs/product.md](docs/product.md) | Product vision, use cases, differentiation, and positioning as a verifiable research and evidence vault |
+| Roadmap | [docs/roadmap.md](docs/roadmap.md) | Phased development plan aligned with Vault-as-entity architecture and Storacha-native milestones |
+| Extras (Demo & Submission) | [docs/extras.md](docs/extras.md) | Demo flow, pitch summary, submission context, and reviewer-oriented project highlights |
 
 ---
 
