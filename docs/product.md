@@ -2,49 +2,51 @@
 
 ## 1. Product Overview
 
-Racha Vault is a verifiable, encrypted research and evidence vault built on Storacha. It is designed for securely storing, versioning, and verifying sensitive artifacts such as datasets, research papers, evidence files, and experiment logs.
+Racha Vault is a verifiable, encrypted research and evidence vault built on Storacha, designed for secure artifact storage, provenance tracking, and capability-based access control.
 
-Unlike generic storage tools, Racha Vault prioritizes:
+Unlike generic storage tools, Racha Vault treats each vault as a first-class entity with its own identity (Vault DID) and governs access through UCAN capability delegations. This enables tamper-evident, privacy-first workflows for research datasets, evidence files, and critical artifacts.
 
-* Data integrity
-* provenance
-* auditability
-* zero-knowledge storage
+The product combines:
 
-The product enables users to import artifacts, encrypt them client-side, store them on decentralized infrastructure, and maintain an immutable CID-based history.
+* Client-side encryption
+* Storacha Spaces for decentralized storage
+* CID-based immutable versioning
+* UCAN capability-based authorization
+* Provenance-aware audit trails
 
 ---
 
 ## 2. Problem Statement
 
-Modern research and evidence workflows rely heavily on centralized storage systems that lack:
+Modern research and evidence workflows rely on centralized storage systems that lack:
 
 * verifiable integrity
-* immutable version tracking
-* secure client-side encryption
-* transparent audit trails
+* cryptographic provenance
+* fine-grained access control
+* auditability of artifact history
 
-This creates risks including:
+This creates significant risks:
 
-* data tampering
-* loss of provenance
-* unauthorized access
-* non-verifiable research artifacts
+* Data tampering and unverifiable modifications
+* Loss of artifact lineage and provenance
+* Overexposed access through coarse role-based permissions
+* Dependence on centralized infrastructure for sensitive data
 
-For researchers, developers, and compliance-focused teams, proving the authenticity and history of critical files is increasingly important.
+For researchers, developers, and compliance-driven teams, the ability to securely store and verify artifacts is increasingly critical.
 
 ---
 
 ## 3. Product Vision
 
-To provide a privacy-first, verifiable vault for research and evidence artifacts where every file is:
+To provide a privacy-first, capability-secured vault for research and evidence artifacts where every file is:
 
-* encrypted before storage
-* immutably versioned via CID
-* traceable through an audit trail
-* portable across decentralized infrastructure
+* Encrypted before leaving the client
+* Stored on decentralized infrastructure (Storacha)
+* Immutably versioned via CID
+* Governed by UCAN capability delegations
+* Traceable through cryptographic audit logs
 
-Racha Vault aims to serve as a foundational data integrity layer for research and sensitive documentation workflows.
+Racha Vault aims to become a foundational integrity layer for research, AI artifacts, and evidence preservation workflows.
 
 ---
 
@@ -54,14 +56,14 @@ Racha Vault aims to serve as a foundational data integrity layer for research an
 
 * Researchers and academic labs
 * AI and data science teams
+* Web3 research groups
 * investigative journalists
 * compliance and legal teams
-* Web3 research groups
 
 ### Secondary Users
 
 * Developers managing research artifacts
-* DAO documentation teams
+* DAOs handling documentation and datasets
 * auditors and verification-focused organizations
 
 ---
@@ -70,91 +72,117 @@ Racha Vault aims to serve as a foundational data integrity layer for research an
 
 ### 5.1 Research Dataset Archiving
 
-Securely store datasets with immutable CID version history and verifiable timestamps.
+Securely store datasets with CID-based version history and verifiable provenance on decentralized storage.
 
 ### 5.2 Evidence Preservation
 
-Maintain tamper-evident records of documents and files for investigative or compliance workflows.
+Maintain tamper-evident records of documents and files with cryptographic audit trails tied to Vault DID and Actor DID.
 
-### 5.3 Experiment Artifact Management
+### 5.3 AI Experiment Artifact Management
 
-Track experiment logs, model outputs, and research files with transparent version lineage.
+Track experiment outputs, logs, and model artifacts with immutable lineage and encrypted storage.
 
-### 5.4 Provenance Tracking for Public Artifacts
+### 5.4 Provenance-Aware Artifact Ingestion
 
-Import GitHub release assets and convert them into encrypted, verifiable vault entries.
+Import GitHub release assets (datasets, archives, research files) and convert them into encrypted, verifiable vault entries.
 
 ---
 
-## 6. Key Product Features
+## 6. Core Product Features
 
-| Feature                 | Description                                           | User Value                      |
-| ----------------------- | ----------------------------------------------------- | ------------------------------- |
-| Vault Spaces            | Private containers for research or evidence artifacts | Organized and secure workflows  |
-| Client-Side Encryption  | Files encrypted before upload                         | Zero-knowledge data protection  |
-| CID-Based Versioning    | Immutable version history per artifact                | Verifiable provenance           |
-| Audit Trail Dashboard   | Timeline of uploads, sources, and versions            | Transparency and traceability   |
-| GitHub Release Import   | Import datasets and artifacts from public repos       | Real-world research integration |
-| Artifact Categorization | Dataset, Paper, Evidence, Logs, Documents             | Domain-specific UX              |
+| Feature                     | Description                                                       | Product Value                    |
+| --------------------------- | ----------------------------------------------------------------- | -------------------------------- |
+| Vault as Entity (Vault DID) | Each vault has its own identity and capability scope              | Clean ownership and traceability |
+| UCAN Capability Access      | Delegated permissions for vault operations (read, upload, manage) | Cryptographic access control     |
+| Encrypted Vault Spaces      | Private containers mapped to Storacha Spaces                      | Secure artifact isolation        |
+| CID-Based Versioning        | Immutable version history per artifact                            | Verifiable provenance            |
+| Audit Trail Dashboard       | Timeline of uploads, actors, and artifact lineage                 | Transparency and accountability  |
+| GitHub Release Import       | Import research artifacts from public repositories                | Real-world workflow integration  |
+| Client-Side Encryption      | Files encrypted before upload                                     | Zero-knowledge storage model     |
+| Artifact Categorization     | Dataset, Paper, Evidence, Logs, Documents                         | Domain-specific UX               |
 
 ---
 
 ## 7. Product Differentiation
 
-Racha Vault is not a generic file storage dashboard. It differentiates itself through:
+Racha Vault is not a generic decentralized storage interface. It is a provenance and integrity focused vault designed for sensitive and verifiable artifacts.
 
-* Verifiable storage using CIDs
-* Research and evidence focused design
-* encrypted artifact pipeline
-* provenance-aware audit tracking
-* decentralized persistence via Storacha
+Key differentiators:
 
-This positions the product as a data integrity tool rather than a storage utility.
+* Vault-centric identity model (Vault DID)
+* Capability-based access using UCAN instead of RBAC
+* CID-native versioning for tamper-evident storage
+* Research and evidence focused artifact workflows
+* Zero-knowledge encrypted ingestion pipeline
 
----
-
-## 8. Why Storacha is Core to the Product
-
-Storacha enables Racha Vault to provide:
-
-* content-addressed storage (CID integrity)
-* durable decentralized persistence
-* Space-based organization for vaults
-* alignment with verifiable and portable data ownership
-
-The product is built around Storacha primitives rather than using storage as a simple backend.
+This positions the product as infrastructure-grade rather than a simple storage dashboard.
 
 ---
 
-## 9. MVP Scope (PL Genesis Submission)
+## 8. Identity & Access Model (Vault DID + UCAN)
 
-The initial MVP focuses on delivering a complete verifiable vault workflow:
+Racha Vault follows a capability-native product design.
 
-* Create vault spaces
-* Upload encrypted artifacts
-* Import GitHub release assets
-* Store files on Storacha
-* Generate CID per version
-* Display audit trail and integrity data
+Core concepts:
 
-This demonstrates a non-trivial real-world integration with decentralized storage infrastructure.
+* Each vault is assigned a unique Vault DID
+* Users interact with vaults through UCAN delegations
+* Capabilities are scoped (vault/read, vault/upload, vault/manage)
+* Audit logs record both Vault DID and Actor DID
 
----
+This model enables:
 
-## 10. Future Product Roadmap
-
-* Collaborative vaults with delegated access
-* encrypted sharing and revocation mechanisms
-* private repository import via OAuth
-* CLI uploader for research pipelines
-* advanced provenance visualization
+* Fine-grained collaboration without centralized role systems
+* Verifiable permission boundaries
+* Cryptographically auditable access control
 
 ---
 
-## 11. Strategic Positioning
+## 9. Why Storacha is Core to the Product
 
-Racha Vault is positioned as:
+Storacha is not used as a generic storage backend but as a foundational infrastructure layer.
 
-> A verifiable research and evidence infrastructure layer built on Storacha, enabling secure, tamper-evident, and provenance-aware artifact management.
+It provides:
 
-This aligns with decentralized storage use cases beyond generic file hosting and showcases meaningful real-world adoption of Storacha’s capabilities.
+* Content addressed storage via CIDs
+* Durable decentralized persistence (IPFS + Filecoin pipeline)
+* Space-based logical isolation for vault entities
+* Native compatibility with capability-based workflows
+* Verifiable and portable data ownership
+
+This makes Storacha ideal for research artifacts and provenance-critical datasets.
+
+---
+
+## 10. MVP Scope (PL Genesis Submission)
+
+The MVP focuses on delivering a complete, non-trivial verifiable vault workflow:
+
+* Vault creation with Vault DID
+* UCAN capability delegation to vault owner
+* Client-side encrypted artifact uploads
+* Storacha Space integration for storage
+* GitHub release artifact import
+* CID generation and version tracking
+* Audit trail with actor and vault attribution
+
+This demonstrates a real-world, infrastructure-aligned use of Storacha beyond basic file uploads.
+
+---
+
+## 11. Product Roadmap Direction
+
+* Multi-collaborator vaults with delegated UCAN permissions
+* Revocable capability management
+* Lit Protocol encrypted sharing
+* Private repository import via OAuth
+* CLI ingestion for research pipelines
+* Advanced provenance analytics and visualization
+
+---
+
+## 12. Strategic Positioning
+
+Racha Vault is positioned as a capability-secured, verifiable data vault built on Storacha, enabling encrypted, tamper-evident, and provenance-aware artifact management for research and evidence workflows.
+
+Rather than competing with generic storage tools, it serves as an integrity layer for decentralized research infrastructure and verifiable data systems.
