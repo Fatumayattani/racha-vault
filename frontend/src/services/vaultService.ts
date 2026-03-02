@@ -15,3 +15,7 @@ export async function createAndPersistVault(
 export async function listVaults() {
   return store.list()
 }
+
+export async function getVaults() {
+  return store.list()
+}
