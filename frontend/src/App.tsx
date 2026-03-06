@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { createAndPersistVault, getVaults } from './services/vaultService'
 import { useVaultSession } from './state/useVaultSession'
 import type { VaultMetadata } from '@lib/vault/vaultManager'
+import { encryptArtifactForVault } from './services/artifactService'
 
 export default function App() {
   const [label, setLabel] = useState('')
@@ -11,6 +12,13 @@ export default function App() {
   const [selectedVault, setSelectedVault] = useState<VaultMetadata | null>(null)
 
   const { unlockedVault, unlock, lock, error } = useVaultSession()
+
+  const [encryptStatus, setEncryptStatus] = useState<string | null>(null)
+  const [encryptedArtifact, setEncryptedArtifact] = useState<{
+  filename: string
+  originalSize: number
+  encryptedSize: number
+} | null>(null)
 
   async function refreshVaults() {
     const list = await getVaults()
@@ -105,16 +113,66 @@ export default function App() {
           )}
 
           {unlockedVault && (
-            <div className="mt-4 p-3 bg-green-900 rounded">
-              Vault unlocked: {unlockedVault.label}
-              <button
-                onClick={lock}
-                className="ml-4 text-sm underline"
-              >
-                Lock
-              </button>
-            </div>
-          )}
+  <div className="mt-4 space-y-3">
+    <div className="p-3 bg-green-900 rounded">
+      Vault unlocked: {unlockedVault.label}
+      <button
+        onClick={() => {
+          lock()
+          setEncryptStatus(null)
+          setEncryptedArtifact(null)
+        }}
+        className="ml-4 text-sm underline"
+      >
+        Lock
+      </button>
+    </div>
+
+    <div className="p-4 border border-gray-800 rounded space-y-3">
+      <h3 className="text-base">Encrypt Artifact</h3>
+
+      <input
+        type="file"
+        className="w-full text-sm"
+        onChange={async (e) => {
+          const file = e.target.files?.[0]
+          if (!file || !unlockedVault) return
+
+          try {
+            setEncryptStatus('Encrypting...')
+            setEncryptedArtifact(null)
+
+            const result = await encryptArtifactForVault(unlockedVault, file)
+
+            setEncryptedArtifact({
+              filename: result.filename,
+              originalSize: result.originalSize,
+              encryptedSize: result.encryptedSize,
+            })
+
+            setEncryptStatus('Encrypted successfully')
+          } catch (err: any) {
+            setEncryptStatus(err.message || 'Encryption failed')
+          } finally {
+            e.target.value = ''
+          }
+        }}
+      />
+
+      {encryptStatus && (
+        <p className="text-sm text-gray-400">{encryptStatus}</p>
+      )}
+
+      {encryptedArtifact && (
+        <div className="text-sm text-gray-300 space-y-1">
+          <div>File: {encryptedArtifact.filename}</div>
+          <div>Original size: {encryptedArtifact.originalSize} bytes</div>
+          <div>Encrypted size: {encryptedArtifact.encryptedSize} bytes</div>
+        </div>
+      )}
+    </div>
+  </div>
+)}
         </div>
 
       </div>
