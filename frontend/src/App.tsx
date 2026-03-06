@@ -18,6 +18,7 @@ export default function App() {
   filename: string
   originalSize: number
   encryptedSize: number
+  cid: string
 } | null>(null)
 
   async function refreshVaults() {
@@ -148,6 +149,7 @@ export default function App() {
               filename: result.filename,
               originalSize: result.originalSize,
               encryptedSize: result.encryptedSize,
+              cid: result.cid,
             })
 
             setEncryptStatus('Encrypted successfully')
@@ -168,6 +170,7 @@ export default function App() {
           <div>File: {encryptedArtifact.filename}</div>
           <div>Original size: {encryptedArtifact.originalSize} bytes</div>
           <div>Encrypted size: {encryptedArtifact.encryptedSize} bytes</div>
+          <div className="break-all">CID: {encryptedArtifact.cid}</div>
         </div>
       )}
     </div>
