@@ -1,22 +1,27 @@
-import * as Client from '@storacha/client'
+import { create } from '@storacha/client'
 
-let storachaClient: Awaited<ReturnType<typeof Client.create>> | null = null
+let client: any | null = null
 
 async function getClient() {
-  if (storachaClient) return storachaClient
+  if (client) return client
 
-  storachaClient = await Client.create()
-  return storachaClient
+  client = await create()
+
+  const current = await client.currentSpace()
+
+  if (!current) {
+    throw new Error(
+      'Storacha space not configured. Run: storacha space use <space-did>'
+    )
+  }
+
+  return client
 }
 
 export async function uploadEncryptedBlob(blob: Blob): Promise<string> {
   const client = await getClient()
 
-  const file = new File([blob], 'artifact.enc', {
-    type: 'application/octet-stream'
-  })
-
-  const cid = await client.uploadFile(file)
+  const cid = await client.upload(blob)
 
   return cid.toString()
 }
